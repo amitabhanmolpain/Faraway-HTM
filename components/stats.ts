@@ -21,33 +21,13 @@ export function Stats(): ReactElement {
 
   return createElement(
     'section',
-    {
-      className: 'py-20 px-4 transition-colors',
-      style: { backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f8f4f0' },
-    },
-    createElement(
-      'div',
-      { className: 'max-w-6xl mx-auto' },
-      createElement(
-        'div',
-        { className: 'grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12' },
-        stats.map((stat, index) =>
-          createElement(
-            'div',
-            { key: index, className: 'text-center' },
-            createElement(
-              'div',
-              { className: 'text-4xl md:text-5xl font-bold mb-2', style: { color: '#ff4f00' } },
-              stat.value
-            ),
-            createElement(
-              'div',
-              {
-                className: 'text-sm md:text-base font-medium transition-colors',
-                style: { color: theme === 'dark' ? '#a0a090' : '#605d52' },
-              },
-              stat.label
-            )
+    { className: 'px-4 py-20' },
+    createElement('div', { className: 'mx-auto max-w-6xl rounded-[1.75rem] border px-6 py-10 backdrop-blur-xl', style: { backgroundColor: theme === 'dark' ? 'rgba(42, 32, 24, 0.6)' : 'rgba(255, 250, 244, 0.72)', borderColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(150, 111, 81, 0.16)', boxShadow: '0 18px 60px rgba(0, 0, 0, 0.08)' } },
+      createElement('div', { className: 'grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12' },
+        stats.map((stat) =>
+          createElement('div', { key: stat.label, className: 'text-center' },
+            createElement('div', { className: 'mb-2 text-4xl font-bold md:text-5xl', style: { color: '#ff4f00' } }, stat.value),
+            createElement('div', { className: 'text-sm font-medium md:text-base', style: { color: theme === 'dark' ? '#d3c8bc' : '#6e6257' } }, stat.label)
           )
         )
       )

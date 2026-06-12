@@ -18,16 +18,16 @@ export function Navbar({ onSignInClick }: NavbarProps) {
     setMounted(true)
   }, [])
 
-  const navBgColor = mounted ? (theme === 'dark' ? '#1a1a1a' : '#fffefb') : '#1a1a1a'
-  const navBorderColor = mounted ? (theme === 'dark' ? '#6a6a60' : '#c5c0b1') : '#6a6a60'
-  const textColor = mounted ? (theme === 'dark' ? '#f5f5f0' : '#201515') : '#f5f5f0'
-  const linkColor = mounted ? (theme === 'dark' ? '#a0a090' : '#605d52') : '#a0a090'
-  const linkHoverColor = mounted ? (theme === 'dark' ? '#d0d0c5' : '#201515') : '#d0d0c5'
-  const themeBgColor = mounted ? (theme === 'dark' ? '#2a2a2a' : '#f8f4f0') : '#2a2a2a'
+  const navBgColor = mounted ? (theme === 'dark' ? 'rgba(20, 15, 11, 0.78)' : 'rgba(255, 250, 243, 0.78)') : 'rgba(20, 15, 11, 0.78)'
+  const navBorderColor = mounted ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(150, 111, 81, 0.16)') : 'rgba(255, 255, 255, 0.1)'
+  const textColor = mounted ? (theme === 'dark' ? '#f5f0e8' : '#241710') : '#f5f0e8'
+  const linkColor = mounted ? (theme === 'dark' ? '#d3c8bc' : '#6e6257') : '#d3c8bc'
+  const linkHoverColor = mounted ? (theme === 'dark' ? '#fff7ee' : '#241710') : '#fff7ee'
+  const themeBgColor = mounted ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 106, 42, 0.1)') : 'rgba(255, 255, 255, 0.08)'
 
   return createElement(
     'nav',
-    { className: 'sticky top-0 z-50 w-full border-b transition-colors', style: { backgroundColor: navBgColor, borderColor: navBorderColor } },
+    { className: 'sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-colors', style: { backgroundColor: navBgColor, borderColor: navBorderColor } },
     createElement(
       'div',
       { className: 'mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8' },
