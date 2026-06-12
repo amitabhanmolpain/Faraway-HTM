@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { ThemeProvider } from './theme-provider'
 import './globals.css'
 
 const inter = Inter({ variable: '--font-sans', subsets: ['latin'] })
@@ -34,9 +35,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} bg-canvas`}>
+    <html lang="en" className={`${inter.variable} dark bg-canvas`}>
       <body className="font-sans antialiased text-ink">
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

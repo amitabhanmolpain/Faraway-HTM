@@ -1,5 +1,9 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
+import { useTheme } from '@/app/theme-provider'
+
 export function HowItWorks() {
   const steps = [
     {
@@ -24,14 +28,16 @@ export function HowItWorks() {
     },
   ]
 
+  const { theme } = useTheme()
+
   return (
-    <section className="py-24 px-4 relative overflow-hidden" style={{ backgroundColor: '#fffefb' }}>
+    <section className="py-24 px-4 relative overflow-hidden transition-colors" style={{ backgroundColor: theme === 'dark' ? '#1a1a1a' : '#fffefb' }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-4xl sm:text-5xl font-semibold mb-6" style={{ color: '#201515' }}>
+          <h2 className="text-4xl sm:text-5xl font-semibold mb-6 transition-colors" style={{ color: theme === 'dark' ? '#f5f5f0' : '#201515' }}>
             How Interview Arena Works
           </h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: '#605d52' }}>
+          <p className="text-lg max-w-2xl mx-auto transition-colors" style={{ color: theme === 'dark' ? '#d0d0c5' : '#605d52' }}>
             A streamlined approach to interview preparation that keeps you engaged without burning you out.
           </p>
         </div>
@@ -41,13 +47,13 @@ export function HowItWorks() {
             <div key={index} className="relative">
               {/* Connection line */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-24 left-full w-6 h-1" style={{ backgroundColor: '#c5c0b1' }}></div>
+                <div className="hidden lg:block absolute top-24 left-full w-6 h-1 transition-colors" style={{ backgroundColor: theme === 'dark' ? '#6a6a60' : '#c5c0b1' }}></div>
               )}
 
-              <div className="relative p-8 rounded-[12px] h-full" style={{ backgroundColor: '#f8f4f0' }}>
-                <div className="text-4xl font-semibold mb-4" style={{ color: '#c5c0b1' }}>{step.number}</div>
-                <h3 className="text-xl font-semibold mb-3" style={{ color: '#201515' }}>{step.title}</h3>
-                <p className="leading-relaxed" style={{ color: '#605d52' }}>{step.description}</p>
+              <div className="relative p-8 rounded-[12px] h-full transition-colors" style={{ backgroundColor: theme === 'dark' ? '#2a2a2a' : '#f8f4f0' }}>
+                <div className="text-4xl font-semibold mb-4 transition-colors" style={{ color: theme === 'dark' ? '#939084' : '#c5c0b1' }}>{step.number}</div>
+                <h3 className="text-xl font-semibold mb-3 transition-colors" style={{ color: theme === 'dark' ? '#f5f5f0' : '#201515' }}>{step.title}</h3>
+                <p className="leading-relaxed transition-colors" style={{ color: theme === 'dark' ? '#d0d0c5' : '#605d52' }}>{step.description}</p>
               </div>
             </div>
           ))}
