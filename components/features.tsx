@@ -35,13 +35,13 @@ export function Features() {
   ]
 
   return (
-    <section className="py-20 px-4 relative">
+    <section className="py-24 px-4 relative" style={{ backgroundColor: '#f8f4f0' }}>
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-            Designed for <span className="text-primary">Success</span>
+        <div className="text-center mb-20">
+          <h2 className="text-4xl sm:text-5xl font-semibold mb-6" style={{ color: '#201515' }}>
+            Designed for Success
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: '#605d52' }}>
             Interview Arena combines cutting-edge AI with game psychology to create the ultimate interview preparation experience.
           </p>
         </div>
@@ -50,14 +50,15 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 overflow-hidden"
+              className="group relative p-8 rounded-[12px] transition-all duration-300 overflow-hidden"
+              style={{ backgroundColor: '#fffefb' }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
               <div className="relative z-10">
                 <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold mb-3 text-foreground">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-semibold mb-3" style={{ color: '#201515' }}>{feature.title}</h3>
+                <p className="leading-relaxed" style={{ color: '#605d52' }}>{feature.description}</p>
               </div>
             </div>
           ))}
