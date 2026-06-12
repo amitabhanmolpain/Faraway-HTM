@@ -47,9 +47,13 @@ export default function Home() {
     router.push('/dashboard')
   }
 
+  const pageBackground = theme === 'dark'
+    ? 'radial-gradient(circle at top left, rgba(255, 106, 42, 0.22), transparent 28%), radial-gradient(circle at top right, rgba(255, 210, 162, 0.12), transparent 24%), linear-gradient(180deg, #140f0b 0%, #1a1410 52%, #120d0a 100%)'
+    : 'radial-gradient(circle at top left, rgba(255, 142, 82, 0.22), transparent 28%), radial-gradient(circle at top right, rgba(255, 206, 156, 0.35), transparent 24%), linear-gradient(180deg, #fffaf3 0%, #fff2e5 50%, #ffe2c8 100%)'
+
   const shell = createElement(
     'main',
-    { className: 'min-h-screen bg-gradient-to-b from-background via-background to-primary/5' },
+    { className: 'min-h-screen', style: { background: pageBackground } },
     createElement(Navbar, { onSignInClick: handleSignInClick }),
     createElement(Hero, null),
     createElement(Stats, null),

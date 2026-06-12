@@ -10,18 +10,16 @@ export function CTA() {
 
   return createElement(
     'section',
-    { className: 'px-4 py-24 transition-colors', style: { backgroundColor: theme === 'dark' ? '#1a1a1a' : '#201515' } },
+    { className: 'px-4 py-24' },
     createElement('div', { className: 'mx-auto max-w-4xl' },
-      createElement('div', { className: 'relative overflow-hidden rounded-[12px] p-12 text-center md:p-16' },
-        createElement('div', { className: 'relative z-10' },
-          createElement('h2', { className: 'mb-6 text-4xl font-semibold transition-colors sm:text-5xl', style: { color: theme === 'dark' ? '#f5f5f0' : '#fffefb' } }, 'Ready to Ace Your Interview?'),
-          createElement('p', { className: 'mx-auto mb-10 max-w-2xl text-lg transition-colors', style: { color: theme === 'dark' ? '#d0d0c5' : '#c5c0b1' } }, 'Join thousands of candidates who have transformed their interview preparation experience with Interview Arena.'),
-          createElement('div', { className: 'flex flex-col justify-center gap-4 sm:flex-row' },
-            createElement('button', { className: 'rounded-[12px] px-8 py-4 text-lg font-semibold transition-colors', style: { backgroundColor: '#ff4f00', color: '#fffefb' }, onMouseEnter: (e) => { e.currentTarget.style.backgroundColor = '#e64500' }, onMouseLeave: (e) => { e.currentTarget.style.backgroundColor = '#ff4f00' }, type: 'button' }, 'Get Started Free'),
-            createElement('button', { className: 'rounded-[12px] border-2 px-8 py-4 text-lg font-semibold transition-colors', style: { borderColor: '#ff4f00', color: '#ff4f00', backgroundColor: theme === 'dark' ? '#1a1a1a' : '#201515' }, onMouseEnter: (e) => { e.currentTarget.style.backgroundColor = theme === 'dark' ? '#2a2a2a' : '#2a2620' }, onMouseLeave: (e) => { e.currentTarget.style.backgroundColor = theme === 'dark' ? '#1a1a1a' : '#201515' }, type: 'button' }, 'Schedule Demo')
-          ),
-          createElement('div', { className: 'mt-8 flex items-center justify-center gap-2 text-base transition-colors', style: { color: theme === 'dark' ? '#939084' : '#939084' } }, createElement(Gift, { size: 18 }), createElement('span', null, 'First 7 days free. No credit card required.'))
-        )
+      createElement('div', { className: 'relative overflow-hidden rounded-[1.75rem] border p-12 text-center backdrop-blur-xl md:p-16', style: { backgroundColor: theme === 'dark' ? 'rgba(20, 15, 11, 0.72)' : 'rgba(36, 23, 16, 0.9)', borderColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.16)', boxShadow: '0 28px 90px rgba(0, 0, 0, 0.18)' } },
+        createElement('h2', { className: 'mb-6 font-serif text-4xl sm:text-5xl', style: { color: '#fffaf5' } }, 'Ready to Ace Your Interview?'),
+        createElement('p', { className: 'mx-auto mb-10 max-w-2xl text-lg leading-8', style: { color: '#d3c8bc' } }, 'Join candidates who have turned interview preparation into a focused daily routine.'),
+        createElement('div', { className: 'flex flex-col justify-center gap-4 sm:flex-row' },
+          createElement('button', { className: 'rounded-[12px] px-8 py-4 text-lg font-semibold transition-colors', style: { backgroundColor: '#ff4f00', color: '#fffefb' }, type: 'button' }, 'Get Started Free'),
+          createElement('button', { className: 'rounded-[12px] border px-8 py-4 text-lg font-semibold transition-colors', style: { borderColor: 'rgba(255, 106, 42, 0.5)', color: '#ff8b4a', backgroundColor: 'rgba(255, 255, 255, 0.06)' }, type: 'button' }, 'Schedule Demo')
+        ),
+        createElement('div', { className: 'mt-8 flex items-center justify-center gap-2 text-base', style: { color: '#d3c8bc' } }, createElement(Gift, { size: 18, color: '#ff8b4a' }), createElement('span', null, 'First 7 days free. No credit card required.'))
       )
     )
   )
