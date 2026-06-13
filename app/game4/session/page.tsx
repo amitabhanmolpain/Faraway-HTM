@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useGame4 } from '../../../components/game4/Game4Context';
 import { useTypewriter } from '../../../components/game4/useTypewriter';
 import { Button } from '../../../components/ui/button';
-import { BossRoundIntro, GooglyRatingMeter, ConfidenceBet } from '../../../components/game4/UIComponents';
+import { GooglyRatingMeter, ConfidenceBet } from '../../../components/game4/UIComponents';
 
 export default function GooglyMasterSession() {
   const router = useRouter();
@@ -26,7 +26,6 @@ export default function GooglyMasterSession() {
 
   const { displayedText, isComplete } = useTypewriter(currentQuestion?.questionText || '', 25);
 
-  // Auto-start fix: Only start if there is no active session AND we are in the lobby
   useEffect(() => {
     if (!sessionId && sessionState === 'lobby') {
       startGame();
@@ -45,7 +44,7 @@ export default function GooglyMasterSession() {
     }
   }, [sessionState, revealResult]);
 
-  // The Proper Game Over Menu
+  // The Proper Game Over Menu (Simple Results Page)
   if (sessionState === 'game_over') return (
     <div className="fixed inset-0 bg-background z-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center space-y-6 animate-slide-up">
@@ -62,7 +61,6 @@ export default function GooglyMasterSession() {
     </div>
   );
 
-  if (sessionState === 'boss_intro') return <BossRoundIntro onComplete={() => startGame()} />;
   if (!currentQuestion) return null;
 
   const isBoss = currentQuestion.difficulty === 'boss';
@@ -128,6 +126,7 @@ export default function GooglyMasterSession() {
             })}
           </div>
 
+          {/* Submit requires BOTH an option and a confidence bet */}
           {sessionState === 'playing' && (
             <Button 
               size="lg"

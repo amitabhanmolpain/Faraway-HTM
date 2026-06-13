@@ -116,7 +116,6 @@ export function Game4Provider({ children }: { children: React.ReactNode }) {
     }
 
     const nextQuestion = mockQuestions[round - 1];
-    const isBoss = nextQuestion.difficulty === 'boss';
     
     setCurrentQuestion(nextQuestion);
     setConfidenceBet(null);
@@ -130,7 +129,8 @@ export function Game4Provider({ children }: { children: React.ReactNode }) {
     nextQuestion.options?.forEach(opt => initialStates[opt.id] = 'default');
     setOptionStates(initialStates);
     
-    setSessionState(isBoss ? 'boss_intro' : 'playing');
+    // Always go to playing state, skip the weird boss intro screen
+    setSessionState('playing');
   };
 
   const startGame = () => {
@@ -168,7 +168,6 @@ export function Game4Provider({ children }: { children: React.ReactNode }) {
   const submitAnswer = () => {
     setIsSubmitting(true);
     setTimeout(() => {
-      // In a real app, backend determines this. For demo, we mock it based on ID.
       const isTrap = selectedOptionId === 'd' || selectedOptionId === 'b';
       const isCorrect = selectedOptionId === 'c';
       const bonus = confidenceBet === 3 && isCorrect ? 50 : 0;
@@ -179,7 +178,7 @@ export function Game4Provider({ children }: { children: React.ReactNode }) {
         trapOptionId: selectedOptionId === 'b' ? 'b' : 'd', 
         isCorrect,
         isTrap,
-        trapExplanation: isTrap ? "You fell for the Googly! That choice completely ignores cascading failures causing network storms." : "Good eye, you avoided the obvious trap.",
+        trapExplanation: isTrap ? "You fell for the Googly! That choice ignores cascading failures." : "Good eye, you avoided the obvious trap.",
         playerInsight: isCorrect ? "Excellent first-principles reasoning." : "Review distributed systems fallbacks.",
         ratingDelta: delta,
         newRating: Math.max(0, Math.min(100, googlyRating + delta)),
@@ -214,7 +213,6 @@ export function Game4Provider({ children }: { children: React.ReactNode }) {
   };
 
   const abandonGame = () => {
-    // Only clear storage so we don't trigger the auto-start loop
     sessionStorage.removeItem('g4_state');
   };
 
