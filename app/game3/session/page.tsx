@@ -20,13 +20,35 @@ export default function SessionPage() {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
+  // --- SOUND ENGINE ---
+  const playSound = (type: 'click' | 'success' | 'fail' | 'fahhh') => {
+    try {
+      const audio = new Audio(`/sounds/${type}.mp3`);
+      audio.play().catch((e) => console.log('Audio autoplay blocked or missing file', e));
+    } catch (err) {
+      // Ignore server-side execution errors
+    }
+  };
+
   useEffect(() => {
     if (sessionState === 'lobby') startGame();
   }, [sessionState, startGame]);
 
+  // State-driven Sounds (Success, Fail, Game Over)
+  useEffect(() => {
+    if (sessionState === 'score_reveal' && evaluationResult) {
+      playSound('success');
+    } else if (sessionState === 'life_lost') {
+      playSound('fail');
+    } else if (sessionState === 'game_over' && livesRemaining <= 0) {
+      playSound('fahhh'); // The legendary FAHHH!
+    }
+  }, [sessionState, evaluationResult, livesRemaining]);
+
   if (!sessionConfig || !currentCard) return null;
 
   const handleMicToggle = async () => {
+    playSound('click');
     if (isRecording) {
       mediaRecorderRef.current?.stop();
       setIsRecording(false);
@@ -63,7 +85,15 @@ export default function SessionPage() {
         <div className="text-muted-foreground font-semibold uppercase tracking-widest text-sm">
           Round {currentRound} / {sessionConfig.totalRounds}
         </div>
-        <Button variant="ghost" size="sm" onClick={() => { abandonGame(); router.push('/dashboard'); }}>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => { 
+            playSound('click');
+            abandonGame(); 
+            router.push('/dashboard'); 
+          }}
+        >
           Quit
         </Button>
       </header>
@@ -86,7 +116,7 @@ export default function SessionPage() {
               <Button 
                 variant={inputMode === 'mic' ? 'default' : 'outline'} 
                 className="rounded-full"
-                onClick={() => setInputMode('mic')}
+                onClick={() => { playSound('click'); setInputMode('mic'); }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
                 Speak Answer
@@ -94,7 +124,7 @@ export default function SessionPage() {
               <Button 
                 variant={inputMode === 'text' ? 'default' : 'outline'} 
                 className="rounded-full"
-                onClick={() => setInputMode('text')}
+                onClick={() => { playSound('click'); setInputMode('text'); }}
               >
                 Type Answer
               </Button>
@@ -130,7 +160,7 @@ export default function SessionPage() {
             <Button 
               size="lg"
               className="w-full mt-4 h-12 rounded-[0.9rem] font-bold text-base"
-              onClick={submitAnswer}
+              onClick={() => { playSound('click'); submitAnswer(); }}
               disabled={(!answer && !isRecording) || isEvaluating}
             >
               {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
@@ -164,6 +194,7 @@ export default function SessionPage() {
               size="lg"
               className="w-full h-12 rounded-[0.9rem] font-bold text-base"
               onClick={() => {
+                playSound('click');
                 if (currentRound >= sessionConfig.totalRounds) router.push('/dashboard');
                 else advanceToNextCard();
               }}
@@ -184,15 +215,63 @@ export default function SessionPage() {
             <p className="text-muted-foreground mb-8">
               Your explanation didn't hit the mark. The interviewer was confused. You have {livesRemaining} lives left.
             </p>
-            <Button size="lg" className="w-full h-12 rounded-[0.9rem] mb-3" onClick={advanceToNextCard}>
+            <Button 
+              size="lg" 
+              className="w-full h-12 rounded-[0.9rem] mb-3" 
+              onClick={() => { playSound('click'); advanceToNextCard(); }}
+            >
               Continue
             </Button>
-            <Button variant="outline" size="lg" className="w-full h-12 rounded-[0.9rem]" onClick={() => { abandonGame(); router.push('/dashboard'); }}>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="w-full h-12 rounded-[0.9rem]" 
+              onClick={() => { playSound('click'); abandonGame(); router.push('/dashboard'); }}
+            >
               Quit Game
             </Button>
           </div>
         </div>
       )}
+
+      {sessionState === 'game_over' && livesRemaining <= 0 && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 animate-fade-in px-4">
+          <div className="bg-background border border-border rounded-[1.5rem] p-8 max-w-sm w-full text-center shadow-2xl scale-100 transition-transform">
+            
+            <div className="w-24 h-24 bg-destructive/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--destructive)" strokeWidth="2.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+            </div>
+            
+            <h2 className="text-4xl font-extrabold text-destructive mb-3 uppercase tracking-wider">
+              Game Over
+            </h2>
+            <p className="text-foreground text-lg font-medium mb-2">
+              The interviewer disconnected.
+            </p>
+            <p className="text-muted-foreground text-sm mb-8">
+              You lost all 3 lives. Brush up on your concepts and try again!
+            </p>
+            
+            <Button 
+              size="lg" 
+              className="w-full h-12 rounded-[0.9rem] font-bold" 
+              onClick={() => {
+                playSound('click');
+                abandonGame(); 
+                router.push('/dashboard'); 
+              }}
+            >
+              Return to Dashboard
+            </Button>
+            
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
