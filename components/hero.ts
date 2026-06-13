@@ -37,7 +37,7 @@ function HeroNote({ theme }: { theme: 'light' | 'dark' }) {
   )
 }
 
-export function Hero() {
+export function Hero({ onStartClick }: { onStartClick?: () => void }) {
   const { theme } = useTheme()
 
   const textColor = theme === 'dark' ? '#f5f0e8' : '#241710'
@@ -57,7 +57,7 @@ export function Hero() {
       createElement('h1', { className: 'mx-auto mb-6 max-w-4xl font-serif text-[clamp(3.2rem,8vw,6.4rem)] leading-none', style: { color: textColor } }, 'Master Interviews Without Burnout'),
       createElement('p', { className: 'mx-auto mb-10 max-w-2xl text-base leading-7 sm:text-lg', style: { color: subTextColor } }, 'Interview Arena turns focused prep into a guided, game-like routine with AI mock interviews, role-specific feedback, and progress you can actually see.'),
       createElement('div', { className: 'flex flex-col justify-center gap-4 sm:flex-row' },
-        createElement('button', { className: 'rounded-[1.2rem] px-8 py-4 text-base font-semibold transition-colors', style: { background: 'linear-gradient(135deg, #ff7a2f 0%, #ff4f00 100%)', color: '#fffaf5', boxShadow: '0 18px 36px rgba(255, 79, 0, 0.28)' }, type: 'button' }, 'Start Free Trial'),
+        createElement('button', { onClick: onStartClick, className: 'rounded-[1.2rem] px-8 py-4 text-base font-semibold transition-colors', style: { background: 'linear-gradient(135deg, #ff7a2f 0%, #ff4f00 100%)', color: '#fffaf5', boxShadow: '0 18px 36px rgba(255, 79, 0, 0.28)' }, type: 'button' }, 'Start Free Trial'),
         createElement('button', { className: 'rounded-[1.2rem] border px-8 py-4 text-base font-semibold transition-colors', style: { backgroundColor: secondaryBg, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(150, 111, 81, 0.18)', color: textColor }, type: 'button' }, 'Watch Demo')
       ),
       createElement(HeroNote, { theme }),

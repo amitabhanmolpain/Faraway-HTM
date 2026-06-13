@@ -186,14 +186,12 @@ export default function Dashboard() {
           ),
           createElement('h2', { className: 'text-xl font-semibold', style: { color: colors.text } }, game.title),
           createElement('p', { className: 'mt-3 min-h-12 text-sm leading-6', style: { color: colors.muted } }, game.detail),
-          createElement(Button, { 
-            className: 'mt-6 h-10 w-full rounded-[0.9rem]', 
+          createElement(Button, {
+            className: 'mt-6 h-10 w-full rounded-[0.9rem]',
             type: 'button',
             onClick: () => {
-              if (game.route !== '#') {
-                router.push(game.route)
-              } else {
-                alert('This game is coming soon!')
+              if (game.title === 'Coffee with Interview Arena') {
+                router.push('/dashboard/game1')
               }
             }
           }, createElement(Play, { size: 17 }), 'Play')
