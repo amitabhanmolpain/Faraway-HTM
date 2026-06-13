@@ -53,16 +53,16 @@ export function AuthModal({ isOpen, onClose, theme, onAuthSuccess }: AuthModalPr
         isSignUp
           ? createElement('div', null,
             createElement('label', { className: 'mb-2 block text-sm font-medium', style: { color: labelColor } }, 'Full Name'),
-            createElement('input', { type: 'text', value: fullName, onChange: (e) => { setFullName(e.currentTarget.value) }, placeholder: 'John Doe', className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
+            createElement('input', { type: 'text', value: fullName, onChange: (e: React.ChangeEvent<HTMLInputElement>) => { setFullName(e.target.value) }, placeholder: 'John Doe', className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
           )
           : null,
         createElement('div', null,
           createElement('label', { className: 'mb-2 block text-sm font-medium', style: { color: labelColor } }, 'Email Address'),
-          createElement('input', { type: 'email', value: email, onChange: (e) => { setEmail(e.currentTarget.value) }, placeholder: 'you@example.com', required: true, className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
+          createElement('input', { type: 'email', value: email, onChange: (e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }, placeholder: 'you@example.com', required: true, className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
         ),
         createElement('div', null,
           createElement('label', { className: 'mb-2 block text-sm font-medium', style: { color: labelColor } }, 'Password'),
-          createElement('input', { type: 'password', value: password, onChange: (e) => { setPassword(e.currentTarget.value) }, placeholder: '••••••••', required: true, className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
+          createElement('input', { type: 'password', value: password, onChange: (e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }, placeholder: '••••••••', required: true, className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
         ),
         createElement('button', { type: 'submit', className: 'mt-6 w-full rounded-[12px] py-3 font-semibold text-white transition-colors', style: { backgroundColor: '#ff4f00' }, onMouseEnter: (e) => { e.currentTarget.style.backgroundColor = '#e64500' }, onMouseLeave: (e) => { e.currentTarget.style.backgroundColor = '#ff4f00' } }, isSignUp ? 'Create Account' : 'Sign In')
       ),

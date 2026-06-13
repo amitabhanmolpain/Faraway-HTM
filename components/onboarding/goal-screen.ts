@@ -81,7 +81,7 @@ export function GoalScreen({ theme, onNext, onSkip }: GoalScreenProps) {
           createElement('div', { className: 'absolute left-4 top-[-18px] drop-shadow-[0_10px_12px_rgba(0,0,0,0.18)]' }, createElement(PaperPin, null)),
           createElement('div', { className: 'rounded-[1.5rem] border border-dashed px-4 py-4', style: { borderColor: theme === 'dark' ? 'rgba(64, 46, 35, 0.26)' : 'rgba(150, 111, 81, 0.22)' } },
             createElement('label', { className: 'mb-2 block text-xs font-semibold uppercase tracking-[0.28em]', style: { color: paperLabelColor } }, 'Your target'),
-            createElement('textarea', { value: goal, onChange: (e) => { setGoal(e.currentTarget.value) }, placeholder: 'Type your target role & company', className: 'min-h-52 w-full resize-none border-0 bg-transparent text-[1.05rem] leading-7 outline-none placeholder:opacity-55', style: { color: paperTextColor, caretColor: accent, fontFamily: 'var(--font-sans)' } })
+            createElement('textarea', { value: goal, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => { setGoal(e.target.value) }, placeholder: 'Type your target role & company', className: 'relative z-10 min-h-52 w-full resize-none border-0 bg-transparent text-[1.05rem] leading-7 outline-none placeholder:opacity-55', style: { color: paperTextColor, caretColor: accent, fontFamily: 'var(--font-sans)' } })
           ),
           createElement('div', { className: 'mt-4 flex items-center justify-between rounded-[1.2rem] px-3 py-2', style: { backgroundColor: theme === 'dark' ? 'rgba(39, 29, 22, 0.45)' : 'rgba(255, 255, 255, 0.55)' } },
             createElement('div', null,

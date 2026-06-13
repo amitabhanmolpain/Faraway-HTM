@@ -11,7 +11,7 @@ export function Footer() {
   const textColor = theme === 'dark' ? '#f5f0e8' : '#241710'
   const linkStyle = { color: theme === 'dark' ? '#d3c8bc' : '#6e6257' }
   const hoverColor = theme === 'dark' ? '#fff7ee' : '#241710'
-  const link = (label: string) => createElement('a', { href: '#', className: 'transition', style: linkStyle, onMouseEnter: (e) => { e.currentTarget.style.color = hoverColor }, onMouseLeave: (e) => { e.currentTarget.style.color = linkStyle.color } }, label)
+  const link = (label: string) => createElement('a', { href: '#', className: 'transition', style: linkStyle, onMouseEnter: (e) => { (e.currentTarget as HTMLAnchorElement).style.color = hoverColor }, onMouseLeave: (e) => { (e.currentTarget as HTMLAnchorElement).style.color = linkStyle.color } }, label)
 
   return createElement(
     'footer',

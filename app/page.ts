@@ -35,7 +35,11 @@ export default function Home() {
 
   const handleOnboardingComplete = (data: OnboardingData): void => {
     const userOnboardingData = { name: userName, goal: data.goal, userType: data.userType, problems: data.problems }
-    localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
+    try {
+      localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
+    } catch (e) {
+      console.error('Failed to save userOnboardingData to localStorage:', e)
+    }
     setIsOnboardingOpen(false)
     router.push('/dashboard')
   }
@@ -43,7 +47,11 @@ export default function Home() {
   const handleOnboardingSkip = (): void => {
     setIsOnboardingOpen(false)
     const userOnboardingData = { name: userName, goal: 'Not specified', userType: 'Not specified', problems: [] }
-    localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
+    try {
+      localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
+    } catch (e) {
+      console.error('Failed to save userOnboardingData to localStorage:', e)
+    }
     router.push('/dashboard')
   }
 
@@ -55,11 +63,11 @@ export default function Home() {
     'main',
     { className: 'min-h-screen', style: { background: pageBackground } },
     createElement(Navbar, { onSignInClick: handleSignInClick }),
-    createElement(Hero, null),
+    createElement(Hero, { onStartClick: handleSignInClick }),
     createElement(Stats, null),
     createElement(Features, null),
     createElement(HowItWorks, null),
-    createElement(CTA, null),
+    createElement(CTA, { onStartClick: handleSignInClick }),
     createElement(Footer, null),
     createElement(AuthModal, { isOpen: isAuthModalOpen, onClose: handleCloseAuthModal, theme, onAuthSuccess: handleAuthSuccess }),
     createElement(OnboardingFlow, { isOpen: isOnboardingOpen, onComplete: handleOnboardingComplete, onSkip: handleOnboardingSkip }),
