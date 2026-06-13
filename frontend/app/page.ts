@@ -13,6 +13,7 @@ import { Footer } from '@/components/footer'
 import { AuthModal } from '@/components/auth-modal'
 import { OnboardingFlow, type OnboardingData } from '@/components/onboarding-flow'
 import { useTheme } from '@/app/theme-provider'
+import { type AuthUser } from '@/lib/auth'
 
 export default function Home() {
   const router = useRouter()
@@ -20,6 +21,7 @@ export default function Home() {
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false)
   const [mounted, setMounted] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const { theme } = useTheme()
 
   useEffect(() => {
@@ -28,13 +30,21 @@ export default function Home() {
 
   const handleSignInClick = (): void => setIsAuthModalOpen(true)
   const handleCloseAuthModal = (): void => setIsAuthModalOpen(false)
-  const handleAuthSuccess = (userData: { email: string; name: string }): void => {
+  const handleAuthSuccess = (userData: AuthUser): void => {
     setUserName(userData.name)
+    setAuthUser(userData)
     setIsOnboardingOpen(true)
   }
 
   const handleOnboardingComplete = (data: OnboardingData): void => {
-    const userOnboardingData = { name: userName, goal: data.goal, userType: data.userType, problems: data.problems }
+    const userOnboardingData = {
+      id: authUser?.id || '',
+      email: authUser?.email || '',
+      name: userName,
+      goal: data.goal,
+      userType: data.userType,
+      problems: data.problems,
+    }
     try {
       localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
     } catch (e) {
@@ -46,7 +56,14 @@ export default function Home() {
 
   const handleOnboardingSkip = (): void => {
     setIsOnboardingOpen(false)
-    const userOnboardingData = { name: userName, goal: 'Not specified', userType: 'Not specified', problems: [] }
+    const userOnboardingData = {
+      id: authUser?.id || '',
+      email: authUser?.email || '',
+      name: userName,
+      goal: 'Not specified',
+      userType: 'Not specified',
+      problems: [],
+    }
     try {
       localStorage.setItem('userOnboardingData', JSON.stringify(userOnboardingData))
     } catch (e) {

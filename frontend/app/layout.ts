@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { createElement, type ReactElement, type ReactNode } from 'react'
 
 import { ThemeProvider } from './theme-provider'
+import { ToastProvider } from '@/components/toast'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -39,7 +40,9 @@ export default function RootLayout({
     createElement(
       'body',
       { className: 'font-sans antialiased text-ink' },
-      createElement(ThemeProvider, null, children),
+      createElement(ThemeProvider, null,
+        createElement(ToastProvider, null, children),
+      ),
       process.env.NODE_ENV === 'production' ? createElement(Analytics) : null,
     ),
   )

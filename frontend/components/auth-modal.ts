@@ -3,18 +3,24 @@
 import { createElement, useState } from 'react'
 import { X } from 'lucide-react'
 
+import { authRequest, type AuthResponse } from '@/lib/auth'
+import { useToast } from '@/components/toast'
+
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
   theme: 'light' | 'dark'
-  onAuthSuccess?: (userData: { email: string; name: string }) => void
+  onAuthSuccess?: (userData: AuthResponse['user']) => void
 }
 
 export function AuthModal({ isOpen, onClose, theme, onAuthSuccess }: AuthModalProps) {
+  const { toast } = useToast()
   const [isSignUp, setIsSignUp] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [fullName, setFullName] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   if (!isOpen) return null
 
@@ -24,12 +30,46 @@ export function AuthModal({ isOpen, onClose, theme, onAuthSuccess }: AuthModalPr
   const inputBorderColor = theme === 'dark' ? '#6a6a60' : '#c5c0b1'
   const labelColor = theme === 'dark' ? '#d0d0c5' : '#605d52'
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
-    if (onAuthSuccess) {
-      onAuthSuccess({ email: email || 'user@example.com', name: fullName || 'User' })
+    setIsSubmitting(true)
+    setErrorMessage('')
+
+    try {
+      const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login'
+      const payload = isSignUp
+        ? { email, password, name: fullName }
+        : { email, password }
+
+      const result = await authRequest<AuthResponse>(endpoint, payload)
+
+      try {
+        localStorage.setItem('authToken', result.access_token)
+        localStorage.setItem('authUser', JSON.stringify(result.user))
+      } catch (storageError) {
+        console.error('Failed to persist auth state:', storageError)
+      }
+
+      if (onAuthSuccess) {
+        onAuthSuccess(result.user)
+      }
+      toast({
+        title: isSignUp ? 'Account created' : 'Signed in',
+        description: `${result.user.name} is now connected to the backend.`,
+        variant: 'success',
+      })
+      onClose()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Authentication failed'
+      setErrorMessage(message)
+      toast({
+        title: 'Authentication failed',
+        description: message,
+        variant: 'error',
+      })
+    } finally {
+      setIsSubmitting(false)
     }
-    onClose()
   }
 
   const fieldStyle = {
@@ -64,7 +104,10 @@ export function AuthModal({ isOpen, onClose, theme, onAuthSuccess }: AuthModalPr
           createElement('label', { className: 'mb-2 block text-sm font-medium', style: { color: labelColor } }, 'Password'),
           createElement('input', { type: 'password', value: password, onChange: (e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }, placeholder: '••••••••', required: true, className: 'w-full rounded-[8px] border-2 px-4 py-3 transition-colors focus:outline-none focus:ring-2', style: fieldStyle })
         ),
-        createElement('button', { type: 'submit', className: 'mt-6 w-full rounded-[12px] py-3 font-semibold text-white transition-colors', style: { backgroundColor: '#ff4f00' }, onMouseEnter: (e) => { e.currentTarget.style.backgroundColor = '#e64500' }, onMouseLeave: (e) => { e.currentTarget.style.backgroundColor = '#ff4f00' } }, isSignUp ? 'Create Account' : 'Sign In')
+        errorMessage
+          ? createElement('p', { className: 'text-sm font-medium text-red-500' }, errorMessage)
+          : null,
+        createElement('button', { type: 'submit', disabled: isSubmitting, className: 'mt-6 w-full rounded-[12px] py-3 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-70', style: { backgroundColor: '#ff4f00' }, onMouseEnter: (e) => { if (!isSubmitting) e.currentTarget.style.backgroundColor = '#e64500' }, onMouseLeave: (e) => { e.currentTarget.style.backgroundColor = '#ff4f00' } }, isSubmitting ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In'))
       ),
       createElement('div', { className: 'mt-6 text-center text-sm', style: { color: labelColor } },
         isSignUp ? 'Already have an account?' : "Don't have an account?", ' ',
