@@ -140,6 +140,8 @@ export default function Game1Page() {
   // Refs for Timers
   const prepIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const answerIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const speechRecognitionActiveRef = useRef<boolean>(false)
+  const speechRecognitionStartingRef = useRef<boolean>(false)
 
   useEffect(() => {
     const startedAt = Date.now()
@@ -178,8 +180,13 @@ export default function Game1Page() {
     return () => {
       if (prepIntervalRef.current) clearInterval(prepIntervalRef.current)
       if (answerIntervalRef.current) clearInterval(answerIntervalRef.current)
+      if (recognition) {
+        try {
+          recognition.abort()
+        } catch {}
+      }
     }
-  }, [])
+  }, [recognition])
 
   // Live calculated filler word count
   const liveFillerWordCount = useMemo(() => {
@@ -217,6 +224,17 @@ export default function Game1Page() {
     }
     setIsPrepping(false)
     setIsRecording(false)
+  }
+
+  const stopSpeechRecognition = () => {
+    speechRecognitionActiveRef.current = false
+    speechRecognitionStartingRef.current = false
+
+    if (!recognition) return
+
+    try {
+      recognition.stop()
+    } catch {}
   }
 
   // Handle Resume File Upload (accept .pdf, .docx only)
@@ -287,6 +305,7 @@ export default function Game1Page() {
   // Trigger Prep Stage
   const triggerPrepTimer = (segmentIndex: number) => {
     stopAllTimers()
+    stopSpeechRecognition()
     setIsPrepping(true)
     setPrepTimeLeft(15)
     setCurrentAnswerText('')
@@ -315,6 +334,8 @@ export default function Game1Page() {
     if (recognition) {
       try {
         recognition.onstart = () => {
+          speechRecognitionActiveRef.current = true
+          speechRecognitionStartingRef.current = false
           setSpeechError('')
         }
         recognition.onresult = (event) => {
@@ -327,19 +348,32 @@ export default function Game1Page() {
           }
         }
         recognition.onerror = (event) => {
-          console.error('Speech recognition error:', event.error)
+          speechRecognitionActiveRef.current = false
+          speechRecognitionStartingRef.current = false
           if (event.error === 'not-allowed') {
             setSpeechError('Microphone permission blocked. Please type in your answer fallback below.')
+          } else if (event.error === 'network') {
+            setSpeechError('Speech recognition service is unavailable right now. You can still type your answer manually.')
           } else {
             setSpeechError(`Speech error: ${event.error}. You can still type manually.`)
           }
         }
         recognition.onend = () => {
-          console.log('Speech recognition completed')
+          speechRecognitionActiveRef.current = false
+          speechRecognitionStartingRef.current = false
         }
-        recognition.start()
+
+        if (!speechRecognitionActiveRef.current && !speechRecognitionStartingRef.current) {
+          speechRecognitionStartingRef.current = true
+          recognition.start()
+        }
       } catch (err) {
-        console.error('Failed to start speech recognition:', err)
+        speechRecognitionStartingRef.current = false
+        if (err instanceof DOMException && err.name === 'InvalidStateError') {
+          speechRecognitionActiveRef.current = true
+        } else {
+          setSpeechError('Speech recognition could not start. You can still type your answer manually.')
+        }
       }
     } else {
       setSpeechError('Web Speech API is not supported in this browser. Please type your answer manually.')
@@ -367,14 +401,7 @@ export default function Game1Page() {
     }
 
     setIsRecording(false)
-
-    if (recognition) {
-      try {
-        recognition.stop()
-      } catch (err) {
-        console.error('Failed to stop recognition:', err)
-      }
-    }
+    stopSpeechRecognition()
   }
 
   // Save current segment answer
@@ -415,9 +442,7 @@ export default function Game1Page() {
   const handleSubmitSession = async () => {
     // Stop recording if active
     stopAllTimers()
-    if (recognition) {
-      try { recognition.stop() } catch {}
-    }
+    stopSpeechRecognition()
 
     setLoading(true)
     try {
@@ -954,9 +979,7 @@ export default function Game1Page() {
               variant: 'outline',
               onClick: () => {
                 stopAllTimers()
-                if (recognition) {
-                  try { recognition.stop() } catch {}
-                }
+                stopSpeechRecognition()
                 router.push('/dashboard')
               },
               type: 'button'
