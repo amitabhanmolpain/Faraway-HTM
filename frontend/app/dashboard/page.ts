@@ -6,6 +6,7 @@ import {
   BarChart3,
   BookOpenCheck,
   Brain,
+  ClipboardCheck,
   Flame,
   Gamepad2,
   Home,
@@ -346,6 +347,7 @@ export default function Dashboard() {
               'div',
               { className: 'mt-7 flex flex-col gap-3 sm:flex-row' },
               createElement(Button, { className: 'h-11 rounded-[0.9rem] px-5 text-sm font-semibold', type: 'button', onClick: () => setActiveSection('games') }, createElement(Play, { size: 18 }), 'Start Practice'),
+              createElement(Button, { className: 'h-11 rounded-[0.9rem] px-5 text-sm font-semibold', variant: 'outline', type: 'button', onClick: () => router.push('/dashboard/interview') }, createElement(ClipboardCheck, { size: 18 }), 'Interview Coach'),
               createElement(Button, { className: 'h-11 rounded-[0.9rem] px-5 text-sm font-semibold', variant: 'outline', type: 'button', onClick: () => setActiveSection('games') }, createElement(Gamepad2, { size: 18 }), 'View Games')
             )
           ),
@@ -513,7 +515,29 @@ export default function Dashboard() {
             'Play'
           )
         )
-      })
+      }),
+      createElement(
+        'article',
+        { key: 'interview-coach', className: 'rounded-[1.25rem] border p-6 transition-transform hover:-translate-y-1', style: { backgroundColor: colors.panel, borderColor: 'rgba(255, 79, 0, 0.3)' } },
+        createElement(
+          'div',
+          { className: 'mb-6 flex items-center justify-start' },
+          createElement('div', { className: 'flex h-12 w-12 items-center justify-center rounded-[1rem]', style: { background: 'linear-gradient(135deg, #ff4f00, #ff8a3d)', color: '#fffefb' } }, createElement(ClipboardCheck, { size: 24 })),
+        ),
+        createElement('div', { className: 'inline-flex items-center gap-1.5 mb-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider', style: { backgroundColor: 'rgba(255, 79, 0, 0.12)', color: colors.primary } }, '🎤 AI Agents'),
+        createElement('h2', { className: 'text-xl font-semibold', style: { color: colors.text } }, 'Interview Coach'),
+        createElement('p', { className: 'mt-3 min-h-12 text-sm leading-6', style: { color: colors.muted } }, 'Paste your resume, get AI-generated questions, type your answer, and receive instant scoring with feedback and drills.'),
+        createElement(
+          Button,
+          {
+            className: 'mt-6 h-10 w-full rounded-[0.9rem]',
+            type: 'button',
+            onClick: () => router.push('/dashboard/interview'),
+          },
+          createElement(Play, { size: 17 }),
+          'Practice Now'
+        )
+      )
     )
   }
 
@@ -704,8 +728,19 @@ export default function Dashboard() {
             })
           ),
           createElement(
+            'button',
+            {
+              className: 'mt-6 flex w-full items-center gap-3 rounded-[0.9rem] px-4 py-3 text-left text-sm font-semibold transition-all hover:scale-[1.02]',
+              style: { background: 'linear-gradient(135deg, rgba(255, 79, 0, 0.15), rgba(255, 150, 50, 0.1))', border: '1px solid rgba(255, 79, 0, 0.3)', color: colors.primary },
+              onClick: () => router.push('/dashboard/interview'),
+              type: 'button',
+            },
+            createElement(ClipboardCheck, { size: 19 }),
+            createElement('span', null, '🎤 Interview Coach')
+          ),
+          createElement(
             'div',
-            { className: 'mt-auto rounded-[1rem] p-4', style: { backgroundColor: colors.soft } },
+            { className: 'mt-4 rounded-[1rem] p-4', style: { backgroundColor: colors.soft } },
             createElement('p', { className: 'text-sm font-semibold', style: { color: colors.text } }, 'Ready for a round?'),
             createElement('p', { className: 'mt-1 text-xs leading-5', style: { color: colors.muted } }, 'Start with one quick game and review the feedback after.'),
             createElement(Button, { className: 'mt-4 h-9 w-full rounded-[0.85rem]', type: 'button', onClick: () => setActiveSection('games') }, 'Open Games')
