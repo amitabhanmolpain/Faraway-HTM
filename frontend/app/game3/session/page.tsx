@@ -52,8 +52,8 @@ export default function SessionPage() {
 
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
   const [liveTranscript, setLiveTranscript] = useState('');
+  const recognitionRef = useRef<any>(null);
   const [dismissedLevelUp, setDismissedLevelUp] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
 
@@ -79,8 +79,6 @@ export default function SessionPage() {
     }
   };
 
-  // Removed auto-start useEffect to allow lobby view interaction first
-
   // State-driven Sounds (Success, Fail, Game Over)
   useEffect(() => {
     if (sessionState === 'score_reveal' && evaluationResult) {
@@ -88,7 +86,7 @@ export default function SessionPage() {
     } else if (sessionState === 'life_lost') {
       playSound('fail');
     } else if (sessionState === 'game_over' && livesRemaining <= 0) {
-      playSound('fahhh'); // The legendary FAHHH!
+      playSound('fahhh');
     }
   }, [sessionState, evaluationResult, livesRemaining]);
 
@@ -195,28 +193,31 @@ export default function SessionPage() {
     playSound('click');
     if (isRecording) {
       mediaRecorderRef.current?.stop();
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsRecording(false);
     } else {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         const mediaRecorder = new MediaRecorder(stream);
         mediaRecorderRef.current = mediaRecorder;
-        
+
         const chunks: Blob[] = [];
         mediaRecorder.ondataavailable = (e) => {
           if (e.data.size > 0) chunks.push(e.data);
         };
-        
+
         mediaRecorder.onstop = async () => {
           const blob = new Blob(chunks, { type: 'audio/webm' });
           setAudioBlob(blob);
-          
+
           setIsTranscribing(true);
           setLiveTranscript('');
           try {
             const formData = new FormData();
             formData.append('audio', blob, 'recording.webm');
-            
+
             const baseUrl = getBackendBaseUrl();
             const res = await fetch(`${baseUrl}/api/game3/transcribe`, {
               method: 'POST',
@@ -238,10 +239,32 @@ export default function SessionPage() {
         };
 
         mediaRecorder.start();
+
+        // Live Web Speech Transcript (browser-side, while recording)
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          const recognition = new SpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+
+          recognition.onresult = (event: any) => {
+            let currentTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              currentTranscript += event.results[i][0].transcript;
+            }
+            setLiveTranscript(currentTranscript);
+          };
+
+          recognitionRef.current = recognition;
+          recognition.start();
+        } else {
+          console.warn("Live transcript not supported in this browser, but audio is still recording.");
+        }
+
         setIsRecording(true);
       } catch (err) {
         console.error("Mic access denied");
-        setInputMode('text'); 
+        setInputMode('text');
       }
     }
   };
@@ -254,7 +277,7 @@ export default function SessionPage() {
 
   return (
     <div className="min-h-screen bg-muted flex flex-col pt-8 px-4 pb-20">
-      
+
       {/* HUD Header */}
       <header className="max-w-3xl w-full mx-auto flex justify-between items-center mb-8">
         <div className="flex items-center gap-1">
@@ -265,13 +288,13 @@ export default function SessionPage() {
         <div className="text-muted-foreground font-semibold uppercase tracking-widest text-sm">
           Round {currentRound} / {sessionConfig.totalRounds}
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => { 
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
             playSound('click');
-            abandonGame(); 
-            router.push('/dashboard'); 
+            abandonGame();
+            router.push('/dashboard');
           }}
         >
           Quit
@@ -280,7 +303,7 @@ export default function SessionPage() {
 
       {/* Main Game Area */}
       <main className="max-w-3xl w-full mx-auto flex-1 flex flex-col">
-        
+
         <div className="flex flex-col items-center justify-center mb-8">
           <div className="mb-8">
             <CountdownRing timeRemaining={timeRemaining} totalTime={sessionConfig.timePerRound} />
@@ -293,16 +316,16 @@ export default function SessionPage() {
         {sessionState === 'playing' && (
           <div className="mt-auto animate-fade-in">
             <div className="flex justify-center mb-4 gap-2">
-              <Button 
-                variant={inputMode === 'mic' ? 'default' : 'outline'} 
+              <Button
+                variant={inputMode === 'mic' ? 'default' : 'outline'}
                 className="rounded-full"
                 onClick={() => { playSound('click'); setInputMode('mic'); }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
                 Speak Answer
               </Button>
-              <Button 
-                variant={inputMode === 'text' ? 'default' : 'outline'} 
+              <Button
+                variant={inputMode === 'text' ? 'default' : 'outline'}
                 className="rounded-full"
                 onClick={() => { playSound('click'); setInputMode('text'); }}
               >
@@ -312,7 +335,7 @@ export default function SessionPage() {
 
             {inputMode === 'text' ? (
               <div className="relative">
-                <textarea 
+                <textarea
                   className="w-full bg-background border border-border rounded-[1rem] p-4 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none h-32"
                   placeholder="Start explaining your concept..."
                   value={answer}
@@ -326,7 +349,7 @@ export default function SessionPage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex flex-col items-center justify-center p-8 bg-background border border-border rounded-[1rem] h-32">
-                  <button 
+                  <button
                     onClick={handleMicToggle}
                     className={`w-16 h-16 rounded-full flex items-center justify-center text-primary-foreground shadow-lg transition-transform ${isRecording ? 'bg-destructive animate-pulse scale-110' : 'bg-primary hover:scale-105'}`}
                   >
@@ -362,13 +385,13 @@ export default function SessionPage() {
               </div>
             )}
 
-            <Button 
+            <Button
               size="lg"
               className="w-full mt-4 h-12 rounded-[0.9rem] font-bold text-base"
               onClick={() => { playSound('click'); submitAnswer(); }}
-              disabled={(!answer && !isRecording) || isEvaluating}
+              disabled={isRecording || (!answer && !audioBlob) || isEvaluating}
             >
-              {isEvaluating ? 'Evaluating...' : 'Submit Answer'}
+              {isEvaluating ? 'Evaluating...' : (isRecording ? 'Stop Recording to Submit' : 'Submit Answer')}
             </Button>
           </div>
         )}
@@ -381,7 +404,7 @@ export default function SessionPage() {
                 +{evaluationResult.xpAwarded} XP
               </span>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-muted p-4 rounded-xl border border-border text-center">
                 <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">Fluency / Clarity</span>
@@ -431,7 +454,7 @@ export default function SessionPage() {
                 <span className="text-lg">🤖</span>
                 <h4 className="font-extrabold text-foreground text-sm uppercase">Ask the AI Coach</h4>
               </div>
-              
+
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -464,7 +487,7 @@ export default function SessionPage() {
               )}
             </div>
 
-            <Button 
+            <Button
               size="lg"
               className="w-full h-12 rounded-[0.9rem] font-bold text-base"
               onClick={() => {
@@ -490,17 +513,17 @@ export default function SessionPage() {
             <p className="text-muted-foreground mb-8">
               Your explanation didn't hit the mark. The interviewer was confused. You have {livesRemaining} lives left.
             </p>
-            <Button 
-              size="lg" 
-              className="w-full h-12 rounded-[0.9rem] mb-3" 
+            <Button
+              size="lg"
+              className="w-full h-12 rounded-[0.9rem] mb-3"
               onClick={() => { playSound('click'); advanceToNextCard(); }}
             >
               Continue
             </Button>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="w-full h-12 rounded-[0.9rem]" 
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full h-12 rounded-[0.9rem]"
               onClick={() => { playSound('click'); abandonGame(); router.push('/dashboard'); }}
             >
               Quit Game
@@ -521,8 +544,8 @@ export default function SessionPage() {
                 {results.outcome === 'completed' ? 'Assessment Completed' : 'Session Terminated'}
               </h2>
               <p className="text-muted-foreground text-sm">
-                {results.outcome === 'completed' 
-                  ? 'Excellent work! The interviewer has graded your articulation performance.' 
+                {results.outcome === 'completed'
+                  ? 'Excellent work! The interviewer has graded your articulation performance.'
                   : 'You ran out of lives. Keep practicing to master these concepts!'}
               </p>
             </div>
@@ -550,7 +573,7 @@ export default function SessionPage() {
               </div>
             </div>
 
-            {/* General Feedback / Insights */}
+            {/* General Feedback */}
             <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl mb-6">
               <h4 className="font-extrabold text-primary text-xs mb-1 uppercase tracking-wide">AI Panel Feedback</h4>
               <p className="text-sm text-foreground leading-relaxed">{results.agentSummary.overall}</p>

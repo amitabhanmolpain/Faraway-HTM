@@ -132,11 +132,13 @@ QUESTION_POOL = [
     }
 ]
 
+
 def initialize_game(level):
     return {
         "totalRounds": 3,
         "startingRating": 50
     }
+
 
 def fetch_question_for_level(level, round_num, seen_ids=[]):
     # Map level to difficulty string
@@ -151,25 +153,26 @@ def fetch_question_for_level(level, round_num, seen_ids=[]):
 
     # Filter by difficulty
     questions = [q for q in QUESTION_POOL if q["difficulty"] == difficulty]
-    
+
     # Exclude already seen questions in this session
     unseen = [q for q in questions if q["id"] not in seen_ids]
-    
+
     # Fallback to seen if everything at this difficulty is exhausted
     if not unseen:
         unseen = questions
-        
+
     # Absolute fallback to the entire pool
     if not unseen:
         unseen = QUESTION_POOL
 
     selected = random.choice(unseen)
     q_data = selected.copy()
-    
+
     # Strip answers for MCQ
     q_data.pop("correct_id", None)
     q_data.pop("trap_id", None)
     return q_data
+
 
 def evaluate_with_agent(question_id, selected_option, open_answer, confidence_bet, current_rating):
     # Find question
@@ -204,7 +207,6 @@ def evaluate_with_agent(question_id, selected_option, open_answer, confidence_be
         }}
         """
     else:
-        # Open questions evaluation
         prompt = f"""
         You are the "Googly Master", an elite, slightly ruthless Tech Lead interviewing a candidate.
         
@@ -235,17 +237,15 @@ def evaluate_with_agent(question_id, selected_option, open_answer, confidence_be
         model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(
             prompt,
-            generation_config=genai.GenerationConfig(
-                response_mime_type="application/json"
-            )
+            generation_config=genai.GenerationConfig(response_mime_type="application/json")
         )
-        
+
         raw_text = response.text.strip()
         if raw_text.startswith("```"):
             raw_text = raw_text.split("```")[1]
             if raw_text.startswith("json"):
                 raw_text = raw_text[4:]
-        
+
         ai_data = json.loads(raw_text.strip())
         print("AI Evaluation Successful!")
     except Exception as e:
@@ -269,7 +269,7 @@ def evaluate_with_agent(question_id, selected_option, open_answer, confidence_be
         bonus = 50 if (confidence_bet == 3 and is_correct) else 0
         delta = 15 if is_correct else (-20 if is_trap else -5)
         xp = (100 if is_correct else 10) + bonus
-        
+
         return {
             "correctOptionId": question["correct_id"],
             "trapOptionId": question.get("trap_id") if is_trap else None,
@@ -288,7 +288,7 @@ def evaluate_with_agent(question_id, selected_option, open_answer, confidence_be
         bonus = 50 if (confidence_bet == 3 and is_correct) else 0
         delta = 15 if is_correct else -10
         xp = (100 if is_correct else 10) + bonus
-        
+
         return {
             "isCorrect": is_correct,
             "isTrap": not is_correct,
@@ -302,11 +302,12 @@ def evaluate_with_agent(question_id, selected_option, open_answer, confidence_be
             "totalXpAwarded": xp
         }
 
+
 def generate_lifeline(question_id, lifeline_type):
     question = next((q for q in QUESTION_POOL if q["id"] == question_id), None)
     if not question:
         raise ValueError("Invalid question ID")
-        
+
     if lifeline_type == '50_50':
         if question["type"] == "mcq":
             all_ids = [opt['id'] for opt in question['options']]
