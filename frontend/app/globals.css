@@ -307,6 +307,22 @@
 .animate-fade-in { animation: fadeIn 0.3s ease-in forwards; }
 .animate-shake { animation: shakeTrap 0.6s ease-in-out; }
 
+@keyframes noteFloat {
+  0% {
+    transform: rotate(-1.3deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-1.3deg) translateY(-8px);
+  }
+  100% {
+    transform: rotate(-1.3deg) translateY(0);
+  }
+}
+
+.animate-note-float {
+  animation: noteFloat 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-slide-up, .animate-fade-in, .animate-shake { animation: none; }
+  .animate-slide-up, .animate-fade-in, .animate-shake, .animate-note-float { animation: none; }
 }

@@ -7,7 +7,7 @@ import { Navbar } from '@/components/navbar'
 import { Hero } from '@/components/hero'
 import { Features } from '@/components/features'
 import { HowItWorks } from '@/components/how-it-works'
-import { Stats } from '@/components/stats'
+import { ProblemSolution } from '@/components/problem-solution'
 import { CTA } from '@/components/cta'
 import { Footer } from '@/components/footer'
 import { AuthModal } from '@/components/auth-modal'
@@ -62,6 +62,13 @@ export default function Home() {
   }, [])
 
   const handleSignInClick = (): void => setIsAuthModalOpen(true)
+  const handleStartClick = (): void => {
+    if (authUser) {
+      router.push('/dashboard')
+    } else {
+      setIsAuthModalOpen(true)
+    }
+  }
   const handleCloseAuthModal = (): void => setIsAuthModalOpen(false)
   const handleSignOut = (): void => {
     localStorage.removeItem('authToken')
@@ -146,11 +153,11 @@ export default function Home() {
     'main',
     { className: 'min-h-screen', style: { background: pageBackground } },
     createElement(Navbar, { onSignInClick: handleSignInClick, authUser, onSignOut: handleSignOut }),
-    createElement(Hero, { onStartClick: handleSignInClick }),
-    createElement(Stats, null),
+    createElement(Hero, { onStartClick: handleStartClick }),
+    createElement(ProblemSolution, null),
     createElement(Features, null),
     createElement(HowItWorks, null),
-    createElement(CTA, { onStartClick: handleSignInClick }),
+    createElement(CTA, { onStartClick: handleStartClick }),
     createElement(Footer, null),
     createElement(AuthModal, { isOpen: isAuthModalOpen, onClose: handleCloseAuthModal, theme, onAuthSuccess: handleAuthSuccess }),
     createElement(OnboardingFlow, { isOpen: isOnboardingOpen, onComplete: handleOnboardingComplete, onSkip: handleOnboardingSkip }),

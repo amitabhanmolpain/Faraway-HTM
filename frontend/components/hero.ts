@@ -14,7 +14,7 @@ function HeroNote({ theme }: { theme: 'light' | 'dark' }) {
 
   return createElement(
     'div',
-    { className: 'relative mx-auto mt-14 w-full max-w-[420px] rounded-[2rem] border px-5 pb-5 pt-8 sm:max-w-[460px] sm:px-6', style: { backgroundColor: paperColor, borderColor: paperEdge, boxShadow: paperShadow, transform: 'rotate(-1.3deg)', backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.18)), repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(145, 107, 77, 0.08) 28px)' } },
+    { className: 'relative mx-auto mt-14 w-full max-w-[420px] rounded-[2rem] border px-5 pb-5 pt-8 sm:max-w-[460px] sm:px-6 animate-note-float', style: { backgroundColor: paperColor, borderColor: paperEdge, boxShadow: paperShadow, backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.18)), repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(145, 107, 77, 0.08) 28px)' } },
     createElement('div', { className: 'absolute left-7 top-[-15px] h-8 w-8 rounded-full', style: { background: 'linear-gradient(135deg, #ffcf7a 0%, #ff7a18 100%)', boxShadow: '0 8px 14px rgba(166, 76, 18, 0.25)' } }),
     createElement('div', { className: 'rounded-[1.5rem] border border-dashed px-5 py-5', style: { borderColor: 'rgba(150, 111, 81, 0.24)' } },
       createElement('p', { className: 'mb-4 text-xs font-semibold uppercase tracking-[0.28em]', style: { color: '#7a6657' } }, 'Your prep path'),
@@ -54,10 +54,10 @@ export function Hero({ onStartClick }: { onStartClick?: () => void }) {
         createElement(Sparkles, { size: 16 }),
         createElement('span', { className: 'text-sm font-semibold' }, 'AI-Powered Interview Mastery')
       ),
-      createElement('h1', { className: 'mx-auto mb-6 max-w-4xl font-serif text-[clamp(3.2rem,8vw,6.4rem)] leading-none', style: { color: textColor } }, 'Master Interviews Without Burnout'),
-      createElement('p', { className: 'mx-auto mb-10 max-w-2xl text-base leading-7 sm:text-lg', style: { color: subTextColor } }, 'Interview Arena turns focused prep into a guided, game-like routine with AI mock interviews, role-specific feedback, and progress you can actually see.'),
+      createElement('h1', { className: 'mx-auto mb-6 max-w-4xl font-serif text-[clamp(3.2rem,8vw,6.4rem)] leading-none', style: { color: textColor } }, 'Play Games. Get Hired.'),
+      createElement('p', { className: 'mx-auto mb-10 max-w-2xl text-base leading-7 sm:text-lg', style: { color: subTextColor } }, 'Interview Arena offers curated games that will help to crack your dream company. Experience a guided, game-like prep routine with AI mock interviews, role-specific feedback, and progress you can actually see.'),
       createElement('div', { className: 'flex flex-col justify-center gap-4 sm:flex-row' },
-        createElement('button', { onClick: onStartClick, className: 'rounded-[1.2rem] px-8 py-4 text-base font-semibold transition-colors', style: { background: 'linear-gradient(135deg, #ff7a2f 0%, #ff4f00 100%)', color: '#fffaf5', boxShadow: '0 18px 36px rgba(255, 79, 0, 0.28)' }, type: 'button' }, 'Start Free Trial'),
+        createElement('button', { onClick: onStartClick, className: 'rounded-[1.2rem] px-8 py-4 text-base font-semibold transition-colors', style: { background: 'linear-gradient(135deg, #ff7a2f 0%, #ff4f00 100%)', color: '#fffaf5', boxShadow: '0 18px 36px rgba(255, 79, 0, 0.28)' }, type: 'button' }, 'Start'),
         createElement('button', { className: 'rounded-[1.2rem] border px-8 py-4 text-base font-semibold transition-colors', style: { backgroundColor: secondaryBg, borderColor: theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(150, 111, 81, 0.18)', color: textColor }, type: 'button' }, 'Watch Demo')
       ),
       createElement(HeroNote, { theme }),
