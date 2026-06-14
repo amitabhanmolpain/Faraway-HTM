@@ -1,4 +1,4 @@
-# Faraway HTM - Faraway Hackathon 2026
+# Faraway Hack The Matrix - Faraway Hackathon 2026
 
 Interview Arena is a full-stack AI-powered platform that turns interview preparation into a game. Instead of boring mock interviews, users practice through short engaging games that build real skills — speaking clearly, thinking under pressure, negotiating salary, and handling tricky questions.
 
