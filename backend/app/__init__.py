@@ -10,6 +10,7 @@ from app.routes.dashboard_routes import dashboard_bp
 from app.routes.auth_routes import auth_bp
 from app.routes.game4_routes import game4_bp
 from app.routes.game3_routes import game3_bp
+from app.routes.game2_routes import game2_bp
 
 
 def create_app() -> Flask:
@@ -38,6 +39,7 @@ def create_app() -> Flask:
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(game4_bp)
     app.register_blueprint(game3_bp)
+    app.register_blueprint(game2_bp)
 
     @app.get("/api/health")
     def health_check():

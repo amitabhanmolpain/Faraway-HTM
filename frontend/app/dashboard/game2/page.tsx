@@ -445,7 +445,7 @@ export default function Game2Page() {
 
     setLoading(true)
     try {
-      const res = await fetch('/api/game2/init', {
+      const res = await fetch('http://localhost:5000/api/game2/init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -505,7 +505,7 @@ export default function Game2Page() {
     setTimeout(async () => {
       setLoading(true)
       try {
-        const res = await fetch('/api/game2/move', {
+        const res = await fetch('http://localhost:5000/api/game2/move', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
