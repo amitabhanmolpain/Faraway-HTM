@@ -1,11 +1,8 @@
-# Faraway HTM - Salary Negotiator Poker Game
+# Faraway Hack The Matrix - Faraway Hackathon 2026
 
-A full-stack web application that teaches salary negotiation through an interactive poker-style game. Built with AI agents that simulate real HR behavior and provide coaching feedback.
+Interview Arena is a full-stack AI-powered platform that turns interview preparation into a game. Instead of boring mock interviews, users practice through short engaging games that build real skills — speaking clearly, thinking under pressure, negotiating salary, and handling tricky questions.
 
-## 📋 Project Overview
 
-**What is it?**
-An innovative learning platform where players negotiate salaries with AI-powered HR agents in a poker-style game format. Players learn negotiation strategies while receiving real-time coaching from AI advisors.
 
 **Tech Stack:**
 - **Backend:** Flask (Python) + MongoDB (with JSON fallback)
@@ -91,37 +88,9 @@ POST /api/coach/report            → Get coaching analysis
 GET  /api/health                  → Health check
 ```
 
-### Frontend Components
 
-#### Pages & Routes
-- **`/dashboard/game2`**: Main salary negotiation game interface
-- Flow: Setup → Gameplay (4 rounds) → Post-Session Analysis
 
-#### New UI Features
 
-**1. Market Recommendation Panel** (During Gameplay)
-- Location: Left sidebar
-- Displays:
-  - **Ask**: Recommended salary to negotiate for
-  - **High/Low Ranges**: Market data bounds
-  - **"Ask Coach" Button**: Real-time coaching during game
-- Data source: `POST /api/game2/init` → `salary_recommendation`
-
-**2. Coach Report** (Post-Session)
-- Button: **"Get Coach Report"**
-- Displays:
-  - Total negotiation actions taken
-  - Heuristic advice OR GenAI-powered feedback
-  - Specific recommendations for improvement
-- Data source: `POST /api/coach/report`
-
-**3. Components Used**
-- `ChipStack`: Visual salary delta display
-- `PokerCard`: HR and player card displays
-- `Button`: Action buttons
-- Custom hooks: `useTypewriter` for text effects
-
----
 
 ## 📊 Data Flow
 
@@ -485,142 +454,11 @@ cd backend
 bash scripts/install_agent_deps.sh
 ```
 
-### Frontend Won't Load
-**Problem**: `CORS error` when calling backend
-- Ensure `CORS_ORIGINS=http://localhost:3000` in backend `.env`
-- Restart backend server
 
-**Problem**: `API endpoint not found`
-- Check backend is running on `http://localhost:5000`
-- Verify all routes are registered in `backend/app/__init__.py`
 
-### Coach Report Returns Generic Advice
-**Problem**: Coach not using GenAI
-- Set `GOOGLE_API_KEY` environment variable
-- Restart backend server
-- Coach will now generate personalized feedback
 
-### Salary Recommendation Not Showing
-**Problem**: Frontend shows no market data
-- Check `salary_recommendation` field in game2/init response
-- Verify `india_salary_data.csv` exists in project root
-- Check backend logs for errors
 
----
 
-## 📈 Performance Tips
-
-1. **Enable MongoDB** for better performance with large datasets
-2. **Cache salary data** by running researcher periodically
-3. **Use GenAI** for more realistic HR behavior
-4. **Enable APScheduler** for automatic daily data refresh
-
----
-
-## 🔄 API Documentation
-
-### POST /api/game2/init
-**Initialize a new salary negotiation session**
-
-**Request:**
-```json
-{
-  "companyName": "string",
-  "role": "string",
-  "currentOffer": number,
-  "resumeText": "string",
-  "predictedSalary": number,
-  "salaryUnit": "lakh" | "crore"
-}
-```
-
-**Response:**
-```json
-{
-  "sessionId": "string",
-  "baseSalary": number,
-  "marketAverage": number,
-  "companyRange": {
-    "min": number,
-    "max": number
-  },
-  "salary_recommendation": {
-    "ask": number,
-    "high": number,
-    "low": number,
-    "best_case": number,
-    "lowest_acceptable": number
-  }
-}
-```
-
-### POST /api/game2/move
-**Process a player move in the negotiation**
-
-**Request:**
-```json
-{
-  "sessionId": "string",
-  "moveType": "Counter" | "Justify" | "Trade" | "Walk",
-  "moveData": "object"
-}
-```
-
-**Response:**
-```json
-{
-  "hrResponse": "string",
-  "salaryDelta": number,
-  "verdict": "string",
-  "feedback": "string"
-}
-```
-
-### POST /api/coach/report
-**Get coaching analysis for a session**
-
-**Request:**
-```json
-{
-  "sessionId": "string"
-}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "session_id": "string",
-    "actions_count": number,
-    "advice": "string"
-  }
-}
-```
-
----
-
-## 📝 Notes
-
-- All salary amounts are in **Indian Rupees (₹)**
-- Default salary unit is **Lakh** (₹100,000)
-- Negotiation consists of **4 rounds** (fixed)
-- Background scheduler requires **APScheduler** installation
-- Web scraping works with or without **BeautifulSoup4**
-
----
-
-## 🎯 Future Enhancements
-
-- [ ] Multi-language support
-- [ ] Real-time multiplayer negotiations
-- [ ] Advanced analytics dashboard
-- [ ] Integration with real job boards
-- [ ] Mobile app version
-- [ ] Voice-based negotiations
-- [ ] Video interview simulations
-
----
 
 ## 📄 License
 
@@ -628,21 +466,4 @@ MIT License - Feel free to use and modify for your needs.
 
 ---
 
-## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 📞 Support
-
-For issues or questions:
-1. Check the **Troubleshooting** section above
-2. Review backend logs: `backend/app/__init__.py`
-3. Check frontend console for errors (F12 in browser)
-4. Verify all environment variables are set correctly
-
----
-
-**Last Updated**: June 14, 2026
-**Version**: 1.0.0
