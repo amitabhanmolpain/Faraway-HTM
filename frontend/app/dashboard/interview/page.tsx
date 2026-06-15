@@ -2,6 +2,46 @@
 
 import React, { useState, useEffect } from 'react';
 
+interface ProfileType {
+  role: string;
+  seniority_level: string;
+  years_experience: number;
+  industry: string;
+  skills: string[];
+}
+
+interface FeedbackIssue {
+  category: string;
+  issue: string;
+  tip: string;
+}
+
+interface FeedbackType {
+  metrics?: Record<string, number>;
+  strengths?: string[];
+  issues?: FeedbackIssue[];
+  top_3_tips?: string[];
+}
+
+interface DrillType {
+  name: string;
+  description: string;
+  duration: number;
+  difficulty: string;
+}
+
+interface BadgeType {
+  icon: string;
+  name: string;
+}
+
+interface UserProgressType {
+  level: number;
+  xp_earned: number;
+  best_score: number;
+  current_streak: number;
+}
+
 export default function InterviewPage() {
   // State management
   const [stage, setStage] = useState('resume'); // resume | profile | question | answer | feedback | progress
@@ -9,26 +49,26 @@ export default function InterviewPage() {
   
   // Resume & Profile
   const [resumeText, setResumeText] = useState('');
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
   const [parseLoading, setParseLoading] = useState(false);
   
   // Question & Answer
-  const [sessionId, setSessionId] = useState(null);
-  const [question, setQuestion] = useState(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [question, setQuestion] = useState<string | null>(null);
   const [timeLimit, setTimeLimit] = useState(45);
   const [answerText, setAnswerText] = useState('');
   const [answerLoading, setAnswerLoading] = useState(false);
-  const [startTime, setStartTime] = useState(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   
   // Feedback
-  const [feedback, setFeedback] = useState(null);
-  const [score, setScore] = useState(null);
-  const [unlockedDrills, setUnlockedDrills] = useState([]);
+  const [feedback, setFeedback] = useState<FeedbackType | null>(null);
+  const [score, setScore] = useState<number | null>(null);
+  const [unlockedDrills, setUnlockedDrills] = useState<DrillType[]>([]);
   
   // Progress
-  const [userProgress, setUserProgress] = useState(null);
-  const [badges, setBadges] = useState([]);
+  const [userProgress, setUserProgress] = useState<UserProgressType | null>(null);
+  const [badges, setBadges] = useState<BadgeType[]>([]);
   
   // Colors for UI
   const colors = {
@@ -79,7 +119,7 @@ export default function InterviewPage() {
         alert(`Error: ${data.message}`);
       }
     } catch (error) {
-      alert(`Failed to parse resume: ${error.message}`);
+      alert(`Failed to parse resume: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setParseLoading(false);
     }
@@ -112,7 +152,7 @@ export default function InterviewPage() {
         alert(`Error: ${data.message}`);
       }
     } catch (error) {
-      alert(`Failed to generate question: ${error.message}`);
+      alert(`Failed to generate question: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -148,7 +188,7 @@ export default function InterviewPage() {
         alert(`Error: ${data.message}`);
       }
     } catch (error) {
-      alert(`Failed to submit answer: ${error.message}`);
+      alert(`Failed to submit answer: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setAnswerLoading(false);
     }
@@ -321,54 +361,57 @@ Senior Engineer at Microsoft (5 years)
     </div>
   );
 
-  const renderProfileStage = () => (
-    <div className={`${colors.bg} min-h-screen p-8`}>
-      <div className={`max-w-2xl mx-auto`}>
-        <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8 mb-6`}>
-          <h2 className={`${colors.text} text-2xl font-bold mb-6`}>✨ Your Profile</h2>
-          
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className={`bg-blue-900/30 rounded-lg p-4 border border-blue-700`}>
-              <p className="text-blue-300 text-sm">Role</p>
-              <p className={`${colors.text} text-lg font-semibold`}>{profile.role}</p>
-            </div>
-            <div className={`bg-purple-900/30 rounded-lg p-4 border border-purple-700`}>
-              <p className="text-purple-300 text-sm">Level</p>
-              <p className={`${colors.text} text-lg font-semibold`}>{profile.seniority_level}</p>
-            </div>
-            <div className={`bg-green-900/30 rounded-lg p-4 border border-green-700`}>
-              <p className="text-green-300 text-sm">Years of Experience</p>
-              <p className={`${colors.text} text-lg font-semibold`}>{profile.years_experience}+ years</p>
-            </div>
-            <div className={`bg-orange-900/30 rounded-lg p-4 border border-orange-700`}>
-              <p className="text-orange-300 text-sm">Industry</p>
-              <p className={`${colors.text} text-lg font-semibold`}>{profile.industry}</p>
-            </div>
-          </div>
-          
-          {profile.skills.length > 0 && (
-            <div className="mb-6">
-              <p className={`${colors.text} font-semibold mb-2`}>Skills</p>
-              <div className="flex flex-wrap gap-2">
-                {profile.skills.map((skill, idx) => (
-                  <span key={idx} className="bg-slate-700 text-slate-200 px-3 py-1 rounded-full text-sm">
-                    {skill}
-                  </span>
-                ))}
+  const renderProfileStage = () => {
+    if (!profile) return null;
+    return (
+      <div className={`${colors.bg} min-h-screen p-8`}>
+        <div className={`max-w-2xl mx-auto`}>
+          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8 mb-6`}>
+            <h2 className={`${colors.text} text-2xl font-bold mb-6`}>✨ Your Profile</h2>
+            
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className={`bg-blue-900/30 rounded-lg p-4 border border-blue-700`}>
+                <p className="text-blue-300 text-sm">Role</p>
+                <p className={`${colors.text} text-lg font-semibold`}>{profile.role}</p>
+              </div>
+              <div className={`bg-purple-900/30 rounded-lg p-4 border border-purple-700`}>
+                <p className="text-purple-300 text-sm">Level</p>
+                <p className={`${colors.text} text-lg font-semibold`}>{profile.seniority_level}</p>
+              </div>
+              <div className={`bg-green-900/30 rounded-lg p-4 border border-green-700`}>
+                <p className="text-green-300 text-sm">Years of Experience</p>
+                <p className={`${colors.text} text-lg font-semibold`}>{profile.years_experience}+ years</p>
+              </div>
+              <div className={`bg-orange-900/30 rounded-lg p-4 border border-orange-700`}>
+                <p className="text-orange-300 text-sm">Industry</p>
+                <p className={`${colors.text} text-lg font-semibold`}>{profile.industry}</p>
               </div>
             </div>
-          )}
-          
-          <button
-            onClick={generateQuestion}
-            className={`w-full py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
-          >
-            🎤 Start Practice Interview →
-          </button>
+            
+            {profile.skills.length > 0 && (
+              <div className="mb-6">
+                <p className={`${colors.text} font-semibold mb-2`}>Skills</p>
+                <div className="flex flex-wrap gap-2">
+                  {profile.skills.map((skill, idx) => (
+                    <span key={idx} className="bg-slate-700 text-slate-200 px-3 py-1 rounded-full text-sm">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <button
+              onClick={generateQuestion}
+              className={`w-full py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
+            >
+              🎤 Start Practice Interview →
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderAnswerStage = () => (
     <div className={`${colors.bg} min-h-screen p-8`}>
@@ -420,35 +463,36 @@ Senior Engineer at Microsoft (5 years)
     </div>
   );
 
-  const renderFeedbackStage = () => (
-    <div className={`${colors.bg} min-h-screen p-8`}>
-      <div className={`max-w-4xl mx-auto space-y-6`}>
-        {/* Score */}
-        <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-400 text-sm">Your Score</p>
-              <p className={`${colors.text} text-5xl font-bold`}>{score}/100</p>
-            </div>
-            <div className={`text-6xl ${score >= 75 ? '😊' : score >= 60 ? '😐' : '😟'}`} />
-          </div>
-        </div>
-        
-        {/* Score Breakdown */}
-        <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
-          <h3 className={`${colors.text} text-xl font-bold mb-4`}>📊 Breakdown</h3>
-          <div className="space-y-3">
-            {Object.entries(feedback.metrics || {}).map(([key, value]) => (
-              <div key={key} className="flex justify-between items-center">
-                <span className="text-slate-300">{key.replace(/_/g, ' ').toUpperCase()}</span>
-                <span className={`${colors.text} font-semibold`}>{value}</span>
+  const renderFeedbackStage = () => {
+    if (score === null || !feedback) return null;
+    return (
+      <div className={`${colors.bg} min-h-screen p-8`}>
+        <div className={`max-w-4xl mx-auto space-y-6`}>
+          {/* Score */}
+          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-400 text-sm">Your Score</p>
+                <p className={`${colors.text} text-5xl font-bold`}>{score}/100</p>
               </div>
-            ))}
+              <div className={`text-6xl ${score >= 75 ? '😊' : score >= 60 ? '😐' : '😟'}`} />
+            </div>
           </div>
-        </div>
-        
-        {/* Feedback */}
-        {feedback && (
+          
+          {/* Score Breakdown */}
+          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
+            <h3 className={`${colors.text} text-xl font-bold mb-4`}>📊 Breakdown</h3>
+            <div className="space-y-3">
+              {Object.entries(feedback.metrics || {}).map(([key, value]) => (
+                <div key={key} className="flex justify-between items-center">
+                  <span className="text-slate-300">{key.replace(/_/g, ' ').toUpperCase()}</span>
+                  <span className={`${colors.text} font-semibold`}>{String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Feedback */}
           <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
             <h3 className={`${colors.text} text-xl font-bold mb-4`}>💬 Feedback</h3>
             
@@ -490,66 +534,67 @@ Senior Engineer at Microsoft (5 years)
               </div>
             )}
           </div>
-        )}
-        
-        {/* Unlocked Drills */}
-        {unlockedDrills && unlockedDrills.length > 0 && (
-          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
-            <h3 className={`${colors.text} text-xl font-bold mb-4`}>🔓 Unlocked Practice Drills</h3>
-            <div className="space-y-3">
-              {unlockedDrills.slice(0, 3).map((drill, idx) => (
-                <div key={idx} className="bg-slate-800/50 p-4 rounded-lg border border-slate-600">
-                  <p className="text-lg font-semibold">{drill.name}</p>
-                  <p className="text-sm text-slate-400">{drill.description}</p>
-                  <p className="text-xs text-slate-500 mt-2">⏱️ {drill.duration}s • Difficulty: {drill.difficulty}</p>
-                </div>
-              ))}
+          
+          {/* Unlocked Drills */}
+          {unlockedDrills && unlockedDrills.length > 0 && (
+            <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
+              <h3 className={`${colors.text} text-xl font-bold mb-4`}>🔓 Unlocked Practice Drills</h3>
+              <div className="space-y-3">
+                {unlockedDrills.slice(0, 3).map((drill, idx) => (
+                  <div key={idx} className="bg-slate-800/50 p-4 rounded-lg border border-slate-600">
+                    <p className="text-lg font-semibold">{drill.name}</p>
+                    <p className="text-sm text-slate-400">{drill.description}</p>
+                    <p className="text-xs text-slate-500 mt-2">⏱️ {drill.duration}s • Difficulty: {drill.difficulty}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-        
-        {/* Badges Earned */}
-        {badges && badges.length > 0 && (
-          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
-            <h3 className={`${colors.text} text-xl font-bold mb-4`}>🏆 Badges Earned</h3>
-            <div className="flex flex-wrap gap-4">
-              {badges.map((badge, idx) => (
-                <div key={idx} className="text-center">
-                  <p className="text-3xl mb-1">{badge.icon}</p>
-                  <p className="text-xs text-slate-300">{badge.name}</p>
-                </div>
-              ))}
+          )}
+          
+          {/* Badges Earned */}
+          {badges && badges.length > 0 && (
+            <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
+              <h3 className={`${colors.text} text-xl font-bold mb-4`}>🏆 Badges Earned</h3>
+              <div className="flex flex-wrap gap-4">
+                {badges.map((badge, idx) => (
+                  <div key={idx} className="text-center">
+                    <p className="text-3xl mb-1">{badge.icon}</p>
+                    <p className="text-xs text-slate-300">{badge.name}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+          )}
+          
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              onClick={generateQuestion}
+              className={`flex-1 py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
+            >
+              🔄 Try Another Question
+            </button>
+            <button
+              onClick={loadProgress}
+              className={`flex-1 py-3 rounded-lg font-semibold text-white transition ${colors.primary}`}
+            >
+              📈 View Progress
+            </button>
           </div>
-        )}
-        
-        {/* Actions */}
-        <div className="flex gap-3">
-          <button
-            onClick={generateQuestion}
-            className={`flex-1 py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
-          >
-            🔄 Try Another Question
-          </button>
-          <button
-            onClick={loadProgress}
-            className={`flex-1 py-3 rounded-lg font-semibold text-white transition ${colors.primary}`}
-          >
-            📈 View Progress
-          </button>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderProgressStage = () => (
-    <div className={`${colors.bg} min-h-screen p-8`}>
-      <div className={`max-w-4xl mx-auto`}>
-        {/* Header */}
-        <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8 mb-6`}>
-          <h1 className={`${colors.text} text-3xl font-bold mb-6`}>📈 Your Progress</h1>
-          
-          {userProgress && (
+  const renderProgressStage = () => {
+    if (!userProgress) return null;
+    return (
+      <div className={`${colors.bg} min-h-screen p-8`}>
+        <div className={`max-w-4xl mx-auto`}>
+          {/* Header */}
+          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8 mb-6`}>
+            <h1 className={`${colors.text} text-3xl font-bold mb-6`}>📈 Your Progress</h1>
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-blue-900/30 rounded-lg p-4">
                 <p className="text-blue-300 text-sm">Level</p>
@@ -568,34 +613,34 @@ Senior Engineer at Microsoft (5 years)
                 <p className={`${colors.text} text-2xl font-bold`}>{userProgress.current_streak} 🔥</p>
               </div>
             </div>
-          )}
-        </div>
-        
-        {/* Badges */}
-        {badges && badges.length > 0 && (
-          <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
-            <h2 className={`${colors.text} text-2xl font-bold mb-4`}>🏆 Badges Earned ({badges.length})</h2>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-              {badges.map((badge, idx) => (
-                <div key={idx} className="text-center p-3 bg-slate-800/50 rounded-lg">
-                  <p className="text-3xl mb-1">{badge.icon}</p>
-                  <p className="text-xs text-slate-300">{badge.name}</p>
-                </div>
-              ))}
-            </div>
           </div>
-        )}
-        
-        {/* Back Button */}
-        <button
-          onClick={generateQuestion}
-          className={`w-full mt-6 py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
-        >
-          ← Back to Practice
-        </button>
+          
+          {/* Badges */}
+          {badges && badges.length > 0 && (
+            <div className={`${colors.panel} rounded-2xl border ${colors.border} p-8`}>
+              <h2 className={`${colors.text} text-2xl font-bold mb-4`}>🏆 Badges Earned ({badges.length})</h2>
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                {badges.map((badge, idx) => (
+                  <div key={idx} className="text-center p-3 bg-slate-800/50 rounded-lg">
+                    <p className="text-3xl mb-1">{badge.icon}</p>
+                    <p className="text-xs text-slate-300">{badge.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Back Button */}
+          <button
+            onClick={generateQuestion}
+            className={`w-full mt-6 py-3 rounded-lg font-semibold text-white transition ${colors.success}`}
+          >
+            ← Back to Practice
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Main render
   return (

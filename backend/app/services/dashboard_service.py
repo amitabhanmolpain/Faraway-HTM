@@ -109,7 +109,14 @@ def save_dashboard_profile(user_id: str, profile_data: dict):
 def get_dashboard_profile(user_id: str):
     profile = find_profile_by_user_id(user_id)
     if not profile:
-        return None
+        profile = upsert_profile(
+            user_id,
+            {
+                "goal": "",
+                "user_type": "",
+                "problems": [],
+            },
+        )
     return _normalize_profile_snapshot(serialize_dashboard_profile(profile))
 
 

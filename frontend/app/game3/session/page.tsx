@@ -19,7 +19,7 @@ export default function SessionPage() {
     advanceToNextCard, isEvaluating, livesRemaining, abandonGame, startGame,
     xpAwarded, badgesEarned, results, setBadgesEarned,
     selectedLevel, setSelectedLevel, warmupDrill, setWarmupDrill, fetchWarmupDrill,
-    setAudioBlob
+    audioBlob, setAudioBlob
   } = useGame3();
 
   const [coachQuestion, setCoachQuestion] = useState('');
